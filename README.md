@@ -45,6 +45,8 @@ module "discovery" {
 }
 ```
 
+> :point_up: If you do not what to use this module you are free to redefine the datasources you need but keep in mind that you will be rebuilding the wheel :ferris_wheel:
+
 ## 1. Create an `ALB`
 
 Let's create an `ALB` and the related resources needed (security groups, listeners and target groups).
