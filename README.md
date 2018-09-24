@@ -31,6 +31,32 @@ Common variables referenced in naming standards
 
 ## 1. Create an `ALB`
 
-TODO Cloudcraft diagram
+Let's create an `ALB` and the related resources needed (security groups, listeners and target groups).
+
+* [aws_lb](https://www.terraform.io/docs/providers/aws/r/lb.html)
+* [aws_lb_target_group](https://www.terraform.io/docs/providers/aws/r/lb_target_group.html)
+* [aws_lb_listener](https://www.terraform.io/docs/providers/aws/r/lb_listener.html)
+* [aws_security_group](https://www.terraform.io/docs/providers/aws/r/security_group.html)
+* [aws_security_group_rule](https://www.terraform.io/docs/providers/aws/r/security_group_rule.html)
+
+![ALB](./docs/1-alb.png)
+
+## 2. Create the `Autoscaling group`- ':house: In House' way
+
+> :point_up: AWS Educate does not allow access to Autoscaling and Launch configuration services, In this example we will simulate autoscaling features by running multiple EC2 instances
+
+* [aws_security_group](https://www.terraform.io/docs/providers/aws/r/security_group.html)
+* [aws_security_group_rule](https://www.terraform.io/docs/providers/aws/r/security_group_rule.html)
+* [aws_instance](https://www.terraform.io/docs/providers/aws/r/instance.html)
+* [aws_lb_target_group_attachment](https://www.terraform.io/docs/providers/aws/r/lb_target_group_attachment.html)
+
+![ALB & ASG](./docs/2-alb-asg.png)
+
+## 3. Add monitoring and create an `Autoscaling` script - ':house: In House' way
+
+> :muscle: It's now on you to figure out a logic to implement scale up / scale down actions on your `autoscaling group`
+
+> :point_up:
+![ALB & ASG & Monitoring](./docs/3-alb-asg-monitoring.png)
 
 *Based on [standard module structure](https://www.terraform.io/docs/modules/create.html#standard-module-structure) guidelines*
