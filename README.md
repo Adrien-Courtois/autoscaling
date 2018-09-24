@@ -29,6 +29,22 @@ Common variables referenced in naming standards
 | ASG Security Groups | `<app_name>`                |         | `web-api`               |
 | ASG Launch Config   | `<app_name>-lc-<timestamp>` |         | `web-api-lc-1537774225` |
 
+## :crystal_ball: Terraform Discovery module
+
+If you followed the naming conventions listed in [terraform-aws-vpc](https://github.com/Lowess/terraform-aws-vpc) you will find it useful to use this [terraform-aws-discovery](https://github.com/Lowess/terraform-aws-discovery) module. The idea of using a discovery module is to centralize `datasource` usage in a central place and keep the source code DRY.
+
+Here is an example usage:
+
+```hcl
+module "discovery" {
+  source              = "github.com/Lowess/terraform-aws-discovery"
+  aws_region          = "${var.aws_region}"
+  vpc_name            = "${var.vpc_name∑}"
+  ec2_ami_names       = [...]
+  ec2_security_groups = [...]
+}
+```
+
 ## 1. Create an `ALB`
 
 Let's create an `ALB` and the related resources needed (security groups, listeners and target groups).
