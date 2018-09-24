@@ -56,7 +56,13 @@ Let's create an `ALB` and the related resources needed (security groups, listene
 
 > :muscle: It's now on you to figure out a logic to implement scale up / scale down actions on your `autoscaling group`
 
-> :point_up:
+> :point_up: Here is a way to retrieve Netdata CPU average using the Netdata API:
+
+```bash
+curl -s "http://<instance-ip>:19999/api/v1/data?chart=system.cpu&after=-10&format=json&options=nonzero" \
+  | jq "[ .data[] | nth(2)] | add / length";
+```
+
 ![ALB & ASG & Monitoring](./docs/3-alb-asg-monitoring.png)
 
 *Based on [standard module structure](https://www.terraform.io/docs/modules/create.html#standard-module-structure) guidelines*
