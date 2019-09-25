@@ -1,9 +1,4 @@
-### Backend definition
-
-# terraform {
-#   # The configuration for this backend will be filled in by Terragrunt
-#   backend "s3" {}
-# }
+### Provider definition
 
 provider "aws" {
   region = "${var.aws_region}"
