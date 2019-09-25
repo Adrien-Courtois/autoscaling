@@ -39,7 +39,7 @@ Here is an example usage:
 module "discovery" {
   source              = "github.com/Lowess/terraform-aws-discovery"
   aws_region          = "${var.aws_region}"
-  vpc_name            = "${var.vpc_name∑}"
+  vpc_name            = "${var.vpc_name}"
   ec2_ami_names       = [...]
   ec2_security_groups = [...]
 }
