@@ -28,6 +28,9 @@ Common variables referenced in naming standards
 |:--------------------|:----------------------------|:--------|:------------------------|
 | ASG Security Groups | `<app_name>`                |         | `web-api`               |
 | ASG Launch Config   | `<app_name>-lc-<timestamp>` |         | `web-api-lc-1537774225` |
+| ASG Launch Template | `<app_name>-lt-<timestamp>` |         | `web-api-lt-1537774225` |
+
+---
 
 ## :crystal_ball: Terraform Discovery module
 
@@ -38,16 +41,19 @@ Here is an example usage:
 ```hcl
 module "discovery" {
   source              = "github.com/Lowess/terraform-aws-discovery"
-  aws_region          = "${var.aws_region}"
-  vpc_name            = "${var.vpc_name}"
-  ec2_ami_names       = [...]
+  aws_region          = var.aws_region
+  vpc_name            = var.vpc_name
+  ec2_ami_names       = ["<AMI-NAME>"]
+  ec2_ami_owners      = "<TEACHER-ACCOUNT-ID>"
   ec2_security_groups = [...]
 }
 ```
 
 > :point_up: If you do not what to use this module you are free to redefine the datasources you need but keep in mind that you will be rebuilding the wheel :ferris_wheel:
 
-## 1. Create an `ALB`
+---
+
+## 1. Create an `AWS ALB`
 
 Let's create an `ALB` and the related resources needed (security groups, listeners and target groups).
 
@@ -59,28 +65,20 @@ Let's create an `ALB` and the related resources needed (security groups, listene
 
 ![ALB](./docs/1-alb.png)
 
-## 2. Create the `Autoscaling group`- ':house: In House' way
-
-> :point_up: AWS Educate does not allow access to Autoscaling and Launch configuration services, In this example we will simulate autoscaling features by running multiple EC2 instances
+## 2. Create the `AWS Autoscaling group`
 
 * [aws_security_group](https://www.terraform.io/docs/providers/aws/r/security_group.html)
 * [aws_security_group_rule](https://www.terraform.io/docs/providers/aws/r/security_group_rule.html)
-* [aws_instance](https://www.terraform.io/docs/providers/aws/r/instance.html)
-* [aws_lb_target_group_attachment](https://www.terraform.io/docs/providers/aws/r/lb_target_group_attachment.html)
+* [aws_launch_template](https://www.terraform.io/docs/providers/aws/r/launch_template.html)
+* [aws_autoscaling_group](https://www.terraform.io/docs/providers/aws/r/autoscaling_group.html)
 
 ![ALB & ASG](./docs/2-alb-asg.png)
 
-## 3. Add monitoring and create an `Autoscaling` script - ':house: In House' way
+## 3. Create policies to make the `AWS Autoscaling group` scale in/out
 
-> :muscle: It's now on you to figure out a logic to implement scale up / scale down actions on your `autoscaling group`
+* Visit the `Cloudwatch` service and discover what this service does
 
-> :point_up: Here is a way to retrieve Netdata CPU average using the Netdata API:
+> :point_up: Think about what's the best metric to use in order to adjust the size of the Autoscaling group
 
-```bash
-curl -s "http://<instance-ip>:19999/api/v1/data?chart=system.cpu&after=-10&format=json&options=nonzero" \
-  | jq "[ .data[] | nth(2)] | add / length";
-```
+* [aws_autoscaling_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_policy)
 
-![ALB & ASG & Monitoring](./docs/3-alb-asg-monitoring.png)
-
-*Based on [standard module structure](https://www.terraform.io/docs/modules/create.html#standard-module-structure) guidelines*
