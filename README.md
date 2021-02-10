@@ -74,7 +74,7 @@ Let's create an `ALB` and the related resources needed (security groups, listene
 
 ![ALB & ASG](./docs/2-alb-asg.png)
 
-## 3. Create policies to make the `AWS Autoscaling group` scale in/out
+## [BONUS] 3. Create policies to make the `AWS Autoscaling group` scale in/out
 
 * Visit the `Cloudwatch` service and discover what this service does
 
