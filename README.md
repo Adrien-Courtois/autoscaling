@@ -71,6 +71,7 @@ Let's create an `ALB` and the related resources needed (security groups, listene
 * [aws_security_group_rule](https://www.terraform.io/docs/providers/aws/r/security_group_rule.html)
 * [aws_launch_template](https://www.terraform.io/docs/providers/aws/r/launch_template.html)
 * [aws_autoscaling_group](https://www.terraform.io/docs/providers/aws/r/autoscaling_group.html)
+    * > :warning: Make sure you use `vpc_zone_identifier` and not `availability_zones`
 
 ![ALB & ASG](./docs/2-alb-asg.png)
 
