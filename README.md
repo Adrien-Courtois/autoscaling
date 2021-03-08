@@ -72,6 +72,7 @@ Let's create an `ALB` and the related resources needed (security groups, listene
 * [aws_launch_template](https://www.terraform.io/docs/providers/aws/r/launch_template.html)
 * [aws_autoscaling_group](https://www.terraform.io/docs/providers/aws/r/autoscaling_group.html)
     * > :warning: Make sure you use `vpc_zone_identifier` and not `availability_zones`
+    * > :warning: Use `min_size = 1` and `max_size = 2` as AWS educate sets limits on your accounts !
 
 ![ALB & ASG](./docs/2-alb-asg.png)
 
