@@ -83,4 +83,6 @@ Let's create an `ALB` and the related resources needed (security groups, listene
 > :point_up: Think about what's the best metric to use in order to adjust the size of the Autoscaling group
 
 * [aws_autoscaling_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_policy)
-
+    * > Define the scaling strategy (add / remove machines)
+* [aws_cloudwatch_metric_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm)
+    * > Define an alarm that will trigger the autoscaling policy
