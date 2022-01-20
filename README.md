@@ -57,20 +57,20 @@ module "discovery" {
 
 Let's create an `ALB` and the related resources needed (security groups, listeners and target groups).
 
-* [aws_lb](https://www.terraform.io/docs/providers/aws/r/lb.html)
-* [aws_lb_target_group](https://www.terraform.io/docs/providers/aws/r/lb_target_group.html)
-* [aws_lb_listener](https://www.terraform.io/docs/providers/aws/r/lb_listener.html)
-* [aws_security_group](https://www.terraform.io/docs/providers/aws/r/security_group.html)
-* [aws_security_group_rule](https://www.terraform.io/docs/providers/aws/r/security_group_rule.html)
+* [aws_lb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb)
+* [aws_lb_target_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group)
+* [aws_lb_listener](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener)
+* [aws_security_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group)
+* [aws_security_group_rule](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule)
 
 ![ALB](./docs/1-alb.png)
 
 ## 2. Create the `AWS Autoscaling group`
 
-* [aws_security_group](https://www.terraform.io/docs/providers/aws/r/security_group.html)
-* [aws_security_group_rule](https://www.terraform.io/docs/providers/aws/r/security_group_rule.html)
-* [aws_launch_template](https://www.terraform.io/docs/providers/aws/r/launch_template.html)
-* [aws_autoscaling_group](https://www.terraform.io/docs/providers/aws/r/autoscaling_group.html)
+* [aws_security_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group)
+* [aws_security_group_rule](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule)
+* [aws_launch_template](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_template)
+* [aws_autoscaling_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_group)
     * > :warning: Make sure you use `vpc_zone_identifier` and not `availability_zones`
     * > :warning: Use `min_size = 1` and `max_size = 2` as AWS educate sets limits on your accounts !
 
