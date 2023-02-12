@@ -5,11 +5,18 @@ provider "aws" {
 }
 
 ## STATE SUR S3 BUCKET
-terraform{
+terraform {
   backend "s3" {
+    # Nom du bucket
     bucket = "adrien-isri-upjv"
-    key    = "terraform/autoscaling/terraform.tfstate"
+
+    # Chemin où on veut mettre le fichier dans le bucket
+    key = "terraform/autoscaling/terraform.tfstate"
+
+    # Region du bucket
     region = "us-east-1"
+
+    # Nom de la dynamo DB pour lock l'accès au fichier
     dynamodb_table = "lock-s3"
   }
 }
@@ -115,7 +122,7 @@ resource "aws_autoscaling_group" "alg" {
   vpc_zone_identifier = [for subnet in module.discovery.private_subnets : subnet]
   max_size            = 2
   min_size            = 1
-  target_group_arns   = ["${aws_lb_target_group.target_group_alb.arn}","${aws_lb_target_group.target_group_alb_netdata.arn}"]
+  target_group_arns   = ["${aws_lb_target_group.target_group_alb.arn}", "${aws_lb_target_group.target_group_alb_netdata.arn}"]
 
   launch_template {
     id      = aws_launch_template.launch_app.id
