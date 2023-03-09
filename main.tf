@@ -57,7 +57,7 @@ resource "aws_lb_target_group" "target_group_alb_netdata" {
 
 ## SECURITY GROUPS
 resource "aws_security_group" "secu_group_alb" {
-  name        = "security_group_alb"
+  name        = "${var.vpc_name}-${var.app_name}-security_group_alb"
   description = "Groupe de securite pour le load balancer entree sur le port 80"
   vpc_id      = module.discovery.vpc_id
 
@@ -67,7 +67,7 @@ resource "aws_security_group" "secu_group_alb" {
 }
 
 resource "aws_security_group" "secu_group_app" {
-  name        = "security_group_app"
+  name        = "${var.vpc_name}-${var.app_name}-security_group_app"
   description = "Groupe de securite pour application entree sur le port 8080"
   vpc_id      = module.discovery.vpc_id
 
