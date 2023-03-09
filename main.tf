@@ -34,7 +34,7 @@ resource "aws_lb" "alb" {
 
 ## TARGET GROUP LOAD BALANCER
 resource "aws_lb_target_group" "target_group_alb" {
-  name     = "target"
+  name     = "${var.vpc_name}-${var.app_name}-target"
   port     = 8080
   protocol = "HTTP"
   vpc_id   = module.discovery.vpc_id
@@ -45,7 +45,7 @@ resource "aws_lb_target_group" "target_group_alb" {
 }
 
 resource "aws_lb_target_group" "target_group_alb_netdata" {
-  name     = "netdata"
+  name     = "${var.vpc_name}-${var.app_name}-netdata"
   port     = 19999
   protocol = "HTTP"
   vpc_id   = module.discovery.vpc_id
