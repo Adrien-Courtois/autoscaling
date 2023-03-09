@@ -4,22 +4,22 @@ provider "aws" {
   region = var.aws_region
 }
 
-## STATE SUR S3 BUCKET
-terraform {
-  backend "s3" {
-    # Nom du bucket
-    bucket = "adrien-isri-upjv"
+# ## STATE SUR S3 BUCKET
+# terraform {
+#   backend "s3" {
+#     # Nom du bucket
+#     bucket = "adrien-isri-upjv"
 
-    # Chemin où on veut mettre le fichier dans le bucket
-    key = "terraform/autoscaling/terraform.tfstate"
+#     # Chemin où on veut mettre le fichier dans le bucket
+#     key = "terraform/autoscaling/terraform.tfstate"
 
-    # Region du bucket
-    region = "us-east-1"
+#     # Region du bucket
+#     region = "us-east-1"
 
-    # Nom de la dynamo DB pour lock l'accès au fichier
-    dynamodb_table = "lock-s3"
-  }
-}
+#     # Nom de la dynamo DB pour lock l'accès au fichier
+#     dynamodb_table = "lock-s3"
+#   }
+# }
 
 ## LOAD BALANCER
 resource "aws_lb" "alb" {
@@ -28,7 +28,7 @@ resource "aws_lb" "alb" {
   subnets            = [for subnet in module.discovery.public_subnets : subnet]
 
   tags = {
-    Name = "${var.app_name}-alb-public"
+    Name = "${var.vpc_name}-${var.app_name}-alb-public"
   }
 }
 
@@ -40,7 +40,7 @@ resource "aws_lb_target_group" "target_group_alb" {
   vpc_id   = module.discovery.vpc_id
 
   tags = {
-    Name = "${var.app_name}-alb-http"
+    Name = "${var.vpc_name}-${var.app_name}-alb-http"
   }
 }
 
@@ -51,28 +51,28 @@ resource "aws_lb_target_group" "target_group_alb_netdata" {
   vpc_id   = module.discovery.vpc_id
 
   tags = {
-    Name = "${var.app_name}-alb-netdata"
+    Name = "${var.vpc_name}-${var.app_name}-alb-netdata"
   }
 }
 
 ## SECURITY GROUPS
 resource "aws_security_group" "secu_group_alb" {
-  name        = "secu_group_alb"
-  description = "Groupe de securite pour le load balancer entree sur 80"
+  name        = "security_group_alb"
+  description = "Groupe de securite pour le load balancer entree sur le port 80"
   vpc_id      = module.discovery.vpc_id
 
   tags = {
-    Name = "${var.app_name}-alb"
+    Name = "${var.vpc_name}-${var.app_name}-security_group_alb"
   }
 }
 
 resource "aws_security_group" "secu_group_app" {
-  name        = "secu_group_app"
-  description = "Groupe de securite pour application entree sur 8080"
+  name        = "security_group_app"
+  description = "Groupe de securite pour application entree sur le port 8080"
   vpc_id      = module.discovery.vpc_id
 
   tags = {
-    Name = "secu_group_app"
+    Name = "${var.vpc_name}-${var.app_name}-security_group_app"
   }
 }
 
@@ -86,6 +86,10 @@ resource "aws_lb_listener" "lb_listener" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.target_group_alb.arn
   }
+
+  tags = {
+    Name = "${var.vpc_name}-${var.app_name}-lb_listener"
+  }
 }
 
 resource "aws_lb_listener" "lb_listener_netdata" {
@@ -97,12 +101,16 @@ resource "aws_lb_listener" "lb_listener_netdata" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.target_group_alb_netdata.arn
   }
+
+  tags = {
+    Name = "${var.vpc_name}-netdata-lb_listener"
+  }
 }
 
 ## LAUNCH TEMPLATE
 resource "aws_launch_template" "launch_app" {
   instance_type          = "t2.micro"
-  key_name               = "deployer-key"
+  key_name               = "${var.vpc_name}-deployer-key"
   vpc_security_group_ids = [aws_security_group.secu_group_app.id]
   image_id               = module.discovery.images_id[0]
 
@@ -110,7 +118,7 @@ resource "aws_launch_template" "launch_app" {
     resource_type = "instance"
 
     tags = {
-      Name = "${var.app_name}-lt"
+      Name = "${var.vpc_name}-${var.app_name}-lt"
     }
   }
 
@@ -118,7 +126,7 @@ resource "aws_launch_template" "launch_app" {
 
 ## AUTOSCALING GROUP
 resource "aws_autoscaling_group" "alg" {
-  name                = "auto_scaling_${var.app_name}"
+  name                = "${var.vpc_name}-${var.app_name}-asg"
   vpc_zone_identifier = [for subnet in module.discovery.private_subnets : subnet]
   max_size            = 2
   min_size            = 1
@@ -132,6 +140,7 @@ resource "aws_autoscaling_group" "alg" {
 }
 
 ## SECURITY RULES
+# Security rules d'entrées sur le load balancer
 resource "aws_security_group_rule" "rule_ingress_alb" {
   type              = "ingress"
   from_port         = 80
@@ -141,6 +150,7 @@ resource "aws_security_group_rule" "rule_ingress_alb" {
   security_group_id = aws_security_group.secu_group_alb.id
 }
 
+# Security rules d'entrées sur le load balancer
 resource "aws_security_group_rule" "rule_ingress_alb_netdata" {
   type              = "ingress"
   from_port         = 19999
@@ -150,6 +160,7 @@ resource "aws_security_group_rule" "rule_ingress_alb_netdata" {
   security_group_id = aws_security_group.secu_group_alb.id
 }
 
+# Security rules de sorties sur le load balancer
 resource "aws_security_group_rule" "rule_egress_alb" {
   type              = "egress"
   from_port         = -1
@@ -159,6 +170,7 @@ resource "aws_security_group_rule" "rule_egress_alb" {
   security_group_id = aws_security_group.secu_group_alb.id
 }
 
+# Security rules d'entrées sur le launch template, utilisé sur les instances lancer par l'autoscaling
 resource "aws_security_group_rule" "rule_ingress_app" {
   type                     = "ingress"
   from_port                = -1 # Avant 8080
@@ -168,6 +180,7 @@ resource "aws_security_group_rule" "rule_ingress_app" {
   security_group_id        = aws_security_group.secu_group_app.id
 }
 
+# Security rules de sorties sur le launch template, utilisé sur les instances lancer par l'autoscaling
 resource "aws_security_group_rule" "rule_egress_app" {
   type              = "egress"
   from_port         = -1
@@ -234,8 +247,8 @@ module "discovery" {
   source         = "github.com/Lowess/terraform-aws-discovery"
   vpc_name       = var.vpc_name
   aws_region     = var.aws_region
-  ec2_ami_names  = ["restaurant-app-AMI-v2"]
-  ec2_ami_owners = "333306874525"
+  ec2_ami_names  = var.ami_names
+  ec2_ami_owners = var.ami_owners
 }
 
 output "disco" {
